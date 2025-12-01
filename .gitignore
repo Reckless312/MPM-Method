@@ -1,6 +1,22 @@
+# CUDA intermediate files
 *.i
 *.ii
 *.gpu
 *.ptx
 *.cubin
 *.fatbin
+*.linkinfo
+
+# Visual Studio
+.vs
+*.obj
+*.pdb
+*.idb
+*.ilk
+*.exe
+*.dll
+*.exp
+*.log
+Debug/
+Release/
+x64/
