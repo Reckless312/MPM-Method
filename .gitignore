@@ -4,3 +4,20 @@
 *.ptx
 *.cubin
 *.fatbin
+.vs/
+
+# Visual Studio build outputs
+*.obj
+*.pdb
+*.idb
+*.ilk
+*.exe
+*.dll
+*.lib
+*.exp
+*.log
+
+# VS build folders
+Debug/
+Release/
+x64/
