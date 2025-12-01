@@ -13,7 +13,6 @@
 *.ilk
 *.exe
 *.dll
-*.lib
 *.exp
 *.log
 
