@@ -3,11 +3,12 @@
 #include <string>
 
 class ShaderException: public std::exception {
-private:
-    std::string message;
 public:
     explicit ShaderException(const char* message);
     [[nodiscard]] const char* what() const noexcept override;
+
+private:
+    std::string message;
 };
 
 #endif

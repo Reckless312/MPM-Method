@@ -11,15 +11,19 @@ public:
     void Load() const;
     void Use() const;
 
+    void SetBool(const std::string& name, bool value) const;
+    void SetInt(const std::string& name, int value) const;
+    void SetFloat(const std::string& name, float value) const;
+
 private:
     unsigned int id;
 
-    const char* vertexShaderPath;
-    const char* fragmentShaderPath;
+    std::string vertexShaderPath;
+    std::string fragmentShaderPath;
 
     const int errorMessageSize = 512;
 
-    static std::string ReadShader(const char* path);
+    static std::string ReadShader(const std::string& path);
 
     void CheckShaderError(unsigned int shaderId) const;
     void CheckShaderProgramError() const;

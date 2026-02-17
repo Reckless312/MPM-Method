@@ -1,11 +1,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "Settings.h"
 #include "Program/Program.h"
 #include "Exceptions/ProgramException.h"
 #include "Exceptions/ShaderException.h"
+#include "Exceptions/TextureException.h"
 #include "Shaders/Shader.h"
+#include "TextureLoader/TextureLoader.h"
 
 int main() {
     Program::InitializeGLFW();
@@ -14,76 +15,71 @@ int main() {
         Program::CreateWindowAndAssignContext();
         Program::LoadGladLibrary();
     } catch (const ProgramException& exception) {
-        Program::ReportErrorAndTerminate(exception.what());
+        return Program::ReportErrorAndTerminate(exception.what());
     }
 
     Program::SetViewportAndResizerCallback();
 
-    Program::SetDefaultBackgroundToPurple();
+    const char* vertexShader = "vertexShader.vs";
+    const char* fragmentShader = "fragmentShader.fs";
 
-    const char* vertexShaderPath = "../src/Shaders/vertexShader.vs";
-    const char* fragmentShaderPath = "../src/Shaders/fragmentShader.fs";
-
-    const Shader shaderProgram(vertexShaderPath, fragmentShaderPath);
+    const Shader shaderProgram(vertexShader, fragmentShader);
 
     try {
         shaderProgram.Load();
     } catch (const ShaderException& exception) {
-        Program::ReportErrorAndTerminate(exception.what());
+        return Program::ReportErrorAndTerminate(exception.what());
     }
 
-    constexpr float firstTriangle[] = {
-        -0.6f,  0.0f, 0.0f,
-        0.0f, -0.8f, 0.0f,
-        0.0f, 0.8f, 0.0f,
+    float vertices[] = {
+        // positions          // colors           // texture coords
+        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+       -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+       -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left
+   };
+
+    unsigned int indices[] = {
+        0, 1, 3,
+        1, 2, 3
     };
 
-    constexpr float secondTriangle[] = {
-        -0.4f,  0.0f, 0.0f,
-        0.2f, -0.8f, 0.0f,
-        0.2f, 0.8f, 0.0f,
-    };
+    constexpr int bufferObjectsCount = 1;
 
-    // unsigned int indices[] = {
-    //     0, 1, 2,
-    //     3, 4, 5
-    // };
+    unsigned int VAO, VBO, EBO;
 
-    constexpr int bufferObjectsCount = 2;
+    glGenBuffers(bufferObjectsCount, &VBO);
+    glGenBuffers(bufferObjectsCount, &EBO);
+    glGenVertexArrays(bufferObjectsCount, &VAO);
 
-    unsigned int VAO[2], VBO[2]; //, EBO[2];
-    glGenBuffers(bufferObjectsCount, VBO);
-    // glGenBuffers(bufferObjectsCount, EBO);
-    glGenVertexArrays(bufferObjectsCount, VAO);
+    glBindVertexArray(VAO);
 
-    glBindVertexArray(VAO[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(firstTriangle), firstTriangle, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), static_cast<void *>(nullptr));
+    glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(locationIndex, vertexSize, vertexType, normalize, vertexStride, dataPosition);
-    glEnableVertexAttribArray(locationIndex);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void *>(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
 
-    glBindVertexArray(VAO[1]);
+    TextureLoader textureLoader("peak.jpg");
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(secondTriangle), secondTriangle, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(locationIndex, vertexSize, vertexType, normalize, vertexStride, dataPosition);
-    glEnableVertexAttribArray(locationIndex);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    glBindVertexArray(0);
-
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    try {
+        textureLoader.Load();
+    } catch (const TextureException& exception) {
+        return Program::ReportErrorAndTerminate(exception.what());
+    }
 
     while (!glfwWindowShouldClose(Program::window))
     {
@@ -93,11 +89,10 @@ int main() {
 
         shaderProgram.Use();
 
-        glBindVertexArray(VAO[0]);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        textureLoader.Bind(GL_TEXTURE0);
 
-        glBindVertexArray(VAO[1]);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(Program::window);
         glfwPollEvents();

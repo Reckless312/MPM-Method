@@ -4,11 +4,12 @@
 #include <string>
 
 class ProgramException: public std::exception {
-private:
-    std::string message;
 public:
     explicit ProgramException(const char* message);
     [[nodiscard]] const char* what() const noexcept override;
+
+private:
+    std::string message;
 };
 
 #endif

@@ -12,7 +12,6 @@ public:
     static void LoadGladLibrary();
     static void SetViewportAndResizerCallback();
     static void ResizeWindow(GLFWwindow* createdWindow, int width, int height);
-    static void SetDefaultBackgroundToPurple();
     static void ProcessInput();
 
     static int ReportErrorAndTerminate(const char* errorMessage);

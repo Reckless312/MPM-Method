@@ -9,8 +9,8 @@
 
 Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath) {
     this->id = glCreateProgram();
-    this->vertexShaderPath = vertexShaderPath;
-    this->fragmentShaderPath = fragmentShaderPath;
+    this->vertexShaderPath = std::string(SHADERS_PATH) + vertexShaderPath;
+    this->fragmentShaderPath = std::string(SHADERS_PATH) + fragmentShaderPath;
 }
 
 Shader::~Shader() {
@@ -45,7 +45,7 @@ void Shader::Load() const {
     glDeleteShader(fragmentId);
 }
 
-std::string Shader::ReadShader(const char *path) {
+std::string Shader::ReadShader(const std::string& path) {
     std::string shaderCode;
 
     std::ifstream shaderFile;
@@ -70,6 +70,18 @@ std::string Shader::ReadShader(const char *path) {
 
 void Shader::Use() const {
     glUseProgram(this->id);
+}
+
+void Shader::SetBool(const std::string &name, const bool value) const {
+    glUniform1i(glGetUniformLocation(this->id, name.c_str()), static_cast<int>(value));
+}
+
+void Shader::SetInt(const std::string &name, const int value) const {
+    glUniform1i(glGetUniformLocation(this->id, name.c_str()), value);
+}
+
+void Shader::SetFloat(const std::string &name, const float value) const {
+    glUniform1f(glGetUniformLocation(this->id, name.c_str()), value);
 }
 
 void Shader::CheckShaderError(const unsigned int shaderId) const {

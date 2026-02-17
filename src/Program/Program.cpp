@@ -11,6 +11,7 @@ void Program::InitializeGLFW() {
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, Program::majorVersion);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, Program::minorVersion);
+
     glfwWindowHint(GLFW_OPENGL_PROFILE, Program::profile);
 }
 
@@ -39,12 +40,6 @@ void Program::SetViewportAndResizerCallback() {
 
 void Program::ResizeWindow(GLFWwindow *createdWindow, const int width, const int height) {
     glViewport(Program::viewportBottomLeftX, Program::viewportBottomLeftY, width, height);
-}
-
-void Program::SetDefaultBackgroundToPurple() {
-    constexpr float red = 0.239f, green = 0.122f, blue = 0.361f, alpha = 1.0f;
-
-    glClearColor(red, green, blue, alpha);
 }
 
 void Program::ProcessInput() {
