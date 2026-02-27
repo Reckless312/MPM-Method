@@ -158,10 +158,8 @@ int main() {
 
         shaderProgram.Use();
 
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-
         shaderProgram.SetMat4("view", camera.viewMatrix);
-        shaderProgram.SetMat4("projection", projection);
+        shaderProgram.SetMat4("projection", program.projectionMatrix);
 
         textureLoader.Bind(GL_TEXTURE0);
 
