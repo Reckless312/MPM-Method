@@ -9,6 +9,8 @@
 Program::Program(Camera &camera) : window(nullptr), camera(&camera) {
     camera.SetLastXDirection(Program::windowWidth / 2.0f);
     camera.SetLastYDirection(Program::windowHeight / 2.0f);
+
+    this->UpdateProjectionMatrix();
 }
 
 void Program::InitializeGLFW() {
@@ -43,6 +45,7 @@ void Program::SetViewportAndCallbacks() const {
 
     glfwSetFramebufferSizeCallback(this->window, Program::ResizeWindow);
     glfwSetCursorPosCallback(this->window, Program::MouseCallback);
+    glfwSetScrollCallback(this->window, Program::ScrollCallback);
 }
 
 void Program::ResizeWindow(GLFWwindow *window, const int width, const int height) {
@@ -52,6 +55,16 @@ void Program::ResizeWindow(GLFWwindow *window, const int width, const int height
 void Program::MouseCallback(GLFWwindow *window, const double xPosition, const double yPosition) {
     if (auto* program = static_cast<Program*>(glfwGetWindowUserPointer(window))) {
         program->UpdateMousePosition(static_cast<float>(xPosition), static_cast<float>(yPosition));
+    }
+    else {
+        throw ProgramException("Failed to get GLFW window user pointer.");
+    }
+}
+
+void Program::ScrollCallback(GLFWwindow *window, const double xOffset, const double yOffset) {
+    if (auto* program = static_cast<Program*>(glfwGetWindowUserPointer(window))) {
+        program->UpdateFov(static_cast<float>(yOffset));
+        program->UpdateProjectionMatrix();
     }
     else {
         throw ProgramException("Failed to get GLFW window user pointer.");
@@ -109,6 +122,14 @@ void Program::UpdateMousePosition(const float currentXDirection, const float cur
     camera->UpdatePitch(-yDirectionOffset);
 
     camera->UpdateDirection();
+}
+
+void Program::UpdateFov(const float currentYOffset) const {
+    camera->UpdateFov(currentYOffset);
+}
+
+void Program::UpdateProjectionMatrix() {
+    this->projectionMatrix = glm::perspective(glm::radians(camera->GetFov()),  Program::windowWidth / 1.0f / Program::windowHeight, 0.1f, 100.0f);
 }
 
 void Program::SetDefaultBackgroundToPurple() {

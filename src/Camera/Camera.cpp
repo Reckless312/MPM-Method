@@ -82,3 +82,19 @@ void Camera::UpdatePitch(const float yDirectionOffset) {
         this->pitch = -89.0f;
     }
 }
+
+float Camera::GetFov() const {
+    return this->fov;
+}
+
+void Camera::UpdateFov(const float yOffset) {
+    this->fov -= yOffset;
+
+    if (fov < 1.0f) {
+        fov = 1.0f;
+    }
+
+    if (fov > 90.0f) {
+        fov = 90.0f;
+    }
+}

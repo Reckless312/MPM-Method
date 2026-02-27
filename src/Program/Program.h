@@ -2,6 +2,7 @@
 #define MPM_METHOD_PROGRAM_H
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 class Camera;
 
@@ -10,6 +11,8 @@ public:
     explicit Program(Camera &camera);
 
     GLFWwindow* window;
+
+    glm::mat4 projectionMatrix{};
 
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -20,8 +23,11 @@ public:
     void UpdateDeltaTime();
     void LockCursor() const;
     void UpdateMousePosition(float currentXDirection, float currentYDirection);
+    void UpdateFov(float currentYOffset) const;
+    void UpdateProjectionMatrix();
 
     static void MouseCallback(GLFWwindow* window, double xPosition, double yPosition);
+    static void ScrollCallback(GLFWwindow* window, double xOffset, double yOffset);
     static void SetDefaultBackgroundToPurple();
     static void InitializeGLFW();
     static void LoadGladLibrary();

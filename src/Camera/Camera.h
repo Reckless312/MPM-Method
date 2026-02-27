@@ -28,6 +28,10 @@ public:
     void UpdateYaw(float xDirectionOffset);
     void UpdatePitch(float yDirectionOffset);
 
+    [[nodiscard]] float GetFov() const;
+
+    void UpdateFov(float yOffset);
+
     glm::mat4 viewMatrix{};
 private:
     glm::vec3 position{};
@@ -42,6 +46,8 @@ private:
 
     float yaw = -90.0f;
     float pitch = 0.0f;
+
+    float fov = 45.0f;
 };
 
 
