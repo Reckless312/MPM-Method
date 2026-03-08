@@ -17,6 +17,8 @@ set(SOURCE_FILES src/glad/glad.c src/main.cpp
         src/Camera/Camera.cpp
         src/Camera/Camera.h
         src/Exceptions/Error.h
+        src/Mesh/Mesh.cpp
+        src/Mesh/Mesh.h
 )
 
 add_executable(MPM_Method ${SOURCE_FILES})
