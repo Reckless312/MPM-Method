@@ -12,6 +12,7 @@ enum class Error
     ShaderLink,
     TextureLoad,
     GLFWLoadUserPointer,
+    ModelLoad,
 };
 
 #endif

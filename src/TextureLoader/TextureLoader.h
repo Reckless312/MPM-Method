@@ -12,6 +12,8 @@ public:
 
     void Load();
     void Bind(GLenum textureUnit) const;
+
+    static unsigned int StaticLoad(const std::string &path, const std::string &directory);
 private:
     GLuint id;
 
@@ -21,8 +23,8 @@ private:
     int height;
     int nrChannels;
 
-    const int formatRGBCode = 3;
-    const int formatRGBACode = 4;
+    static constexpr int formatRGBCode = 3;
+    static constexpr int formatRGBACode = 4;
 };
 
 

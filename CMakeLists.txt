@@ -19,6 +19,8 @@ set(SOURCE_FILES src/glad/glad.c src/main.cpp
         src/Exceptions/Error.h
         src/Mesh/Mesh.cpp
         src/Mesh/Mesh.h
+        src/Model/Model.cpp
+        src/Model/Model.h
 )
 
 add_executable(MPM_Method ${SOURCE_FILES})
@@ -29,7 +31,7 @@ set_target_properties(MPM_Method PROPERTIES
 target_include_directories(MPM_Method PUBLIC src src/Libraries/include)
 
 target_compile_definitions(MPM_Method PRIVATE
-        ASSETS_PATH="${CMAKE_SOURCE_DIR}/src/Assets/"
+        ASSETS_PATH="${CMAKE_SOURCE_DIR}/src/Assets"
         SHADERS_PATH="${CMAKE_SOURCE_DIR}/src/Shaders/"
 )
 

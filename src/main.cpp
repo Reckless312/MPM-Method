@@ -7,6 +7,7 @@
 #include "Camera/Camera.h"
 #include "Program/Program.h"
 #include "Exceptions/MPMException.h"
+#include "Model/Model.h"
 #include "Shaders/Shader.h"
 #include "TextureLoader/TextureLoader.h"
 
@@ -309,6 +310,8 @@ int main()
             lightCubeShader.SetMat4("model", pointLightsModel);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+
+        glBindVertexArray(0);
 
         glfwSwapBuffers(program.window);
         glfwPollEvents();

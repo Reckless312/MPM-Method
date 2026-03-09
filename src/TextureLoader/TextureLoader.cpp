@@ -8,13 +8,26 @@ TextureLoader::TextureLoader(const char *path) : id(0), width(0), height(0), nrC
 {
     stbi_set_flip_vertically_on_load(true);
 
-    this->path = std::string(ASSETS_PATH) + path;
+    this->path = path;
 }
 
 void TextureLoader::Load()
 {
+    this->id = TextureLoader::StaticLoad(this->path, std::string(ASSETS_PATH));
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+unsigned int TextureLoader::StaticLoad(const std::string &path, const std::string &directory)
+{
+    const std::string fullPath = directory + "/" + path;
+
     constexpr int desiredChannels = 0;
-    unsigned char *data = stbi_load(this->path.c_str(), &width, &height, &nrChannels, desiredChannels);
+
+    unsigned int textureId;
+    int width, height, nrChannels;
+
+    unsigned char *data = stbi_load(fullPath.c_str(), &width, &height, &nrChannels, desiredChannels);
 
     if (data == nullptr)
     {
@@ -24,20 +37,20 @@ void TextureLoader::Load()
     GLint internalFormat = GL_RED;
     GLenum format = GL_RED;
 
-    if (nrChannels == this->formatRGBCode)
+    if (nrChannels == TextureLoader::formatRGBCode)
     {
         internalFormat = GL_RGB;
         format = GL_RGB;
     }
-    else if (nrChannels == this->formatRGBACode)
+    else if (nrChannels == TextureLoader::formatRGBACode)
     {
         internalFormat = GL_RGBA;
         format = GL_RGBA;
     }
 
-    glGenTextures(1, &this->id);
+    glGenTextures(1, &textureId);
 
-    glBindTexture(GL_TEXTURE_2D, this->id);
+    glBindTexture(GL_TEXTURE_2D, textureId);
 
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -49,7 +62,7 @@ void TextureLoader::Load()
 
     stbi_image_free(data);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
+    return textureId;
 }
 
 void TextureLoader::Bind(const GLenum textureUnit) const
