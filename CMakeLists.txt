@@ -21,6 +21,7 @@ set(SOURCE_FILES src/Libraries/glad.c src/main.cpp
         src/OpenGL/Model/Mesh.h
         src/OpenGL/Model/Model.cpp
         src/OpenGL/Model/Model.h
+        src/main_temp_code.cpp
 )
 
 add_executable(MPM_Method ${SOURCE_FILES})

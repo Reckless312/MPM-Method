@@ -33,7 +33,7 @@ private:
     float mouseXDirection;
     float mouseYDirection;
 
-    float speed = 2.5f;
+    float speed = 20.0f;
 
     float yaw = -90.0f;
     float pitch = 0.0f;
@@ -41,11 +41,11 @@ private:
 
     bool firstMouse = true;
 
-    const float speedMultiplier = 2.5f;
+    const float speedMultiplier = 20.0f;
     const float sensitivity = 0.1f;
 
     const float nearPlane = 0.1f;
-    const float farPlane = 100.0f;
+    const float farPlane = 350.0f;
 
     const float maxPitch = 89.0f;
     const float minPitch = -89.0f;

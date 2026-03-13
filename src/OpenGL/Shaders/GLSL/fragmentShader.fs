@@ -4,8 +4,8 @@
 
 struct Material
 {
-    sampler2D diffuse;
-    sampler2D specular;
+    sampler2D texture_diffuse1;
+    sampler2D texture_specular1;
     sampler2D emission;
     float shininess;
 };
@@ -79,18 +79,18 @@ void main()
 
     vec3 result = CalculateDirectionalLight(directionalLight, normal, viewDirection);
 
-    for (int i = 0; i < NR_POINT_LIGHTS; i++)
-    {
-        result += CalculatePointLight(pointLights[i], normal, FragmentPosition, viewDirection);
-    }
+//     for (int i = 0; i < NR_POINT_LIGHTS; i++)
+//     {
+//         result += CalculatePointLight(pointLights[i], normal, FragmentPosition, viewDirection);
+//     }
 
-    result += CalculateSpotLight(spotLight, normal, FragmentPosition, viewDirection);
+    // result += CalculateSpotLight(spotLight, normal, FragmentPosition, viewDirection);
 
     vec3 emission = vec3(0.0);
-    if (texture(material.specular, TextureCoords).r == 0.0)
-    {
-        emission = texture(material.emission, TextureCoords).rgb;
-    }
+//     if (texture(material.texture_specular1, TextureCoords).r == 0.0)
+//     {
+//         emission = texture(material.emission, TextureCoords).rgb;
+//     }
 
     FragmentColor = vec4(result + emission, 1.0);
 }
@@ -136,22 +136,26 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragmentPosition, vec
     float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
-    diffuse *= intensity;
-    specular *= intensity;
+    float distance = length(light.position - fragmentPosition);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+
+    ambient *= attenuation;
+    diffuse *= attenuation * intensity;
+    specular *= attenuation * intensity;
 
     return (ambient + diffuse + specular);
 }
 
 vec3 CalculateRegularAmbient(vec3 lightAmbient)
 {
-    return lightAmbient * vec3(texture(material.diffuse, TextureCoords));
+    return lightAmbient * vec3(texture(material.texture_diffuse1, TextureCoords));
 }
 
 vec3 CalculateRegularDiffuse(vec3 normal, vec3 lightDirection, vec3 lightDiffuse)
 {
     float diffuseImpact = max(dot(normal, lightDirection), 0.0);
 
-    return lightDiffuse * diffuseImpact * vec3(texture(material.diffuse, TextureCoords));
+    return lightDiffuse * diffuseImpact * vec3(texture(material.texture_diffuse1, TextureCoords));
 }
 
 vec3 CalculateRegularSpecular(vec3 normal, vec3 lightDirection, vec3 lightSpecular, vec3 viewDirection)
@@ -160,5 +164,5 @@ vec3 CalculateRegularSpecular(vec3 normal, vec3 lightDirection, vec3 lightSpecul
 
     float specularImpact = pow(max(dot(viewDirection, reflectionDirection), 0.0), material.shininess);
 
-    return lightSpecular * specularImpact * vec3(texture(material.specular, TextureCoords));
+    return lightSpecular * specularImpact * vec3(texture(material.texture_specular1, TextureCoords));
 }
